@@ -1,0 +1,22 @@
+sudo: required
+services:
+    - docker
+
+before_install:
+    - docker build -t mitsaek/react-test -f ./client/Dockerfile.dev
+
+script:
+    - docker run mitsaek/react-test npm test -- --coverage 
+
+after_success: 
+    - docker build -t mitsaek/multi-client  ./client 
+    - docker build -t mitsaek/multi-nginx ./nginx
+    - docker build -t mitsaek/multi.server ./server 
+    - docker build -t mitsaek/multi-worker ./worker 
+    # Log in to the docker CLI
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+    # take those images and push them to github 
+    - docker push mitsaek/multi-client
+    - docker push mitsaek/multi-nginx
+    - docker push mitsaek/multi-server
+    - docker push mitsaek/multi-worker 
