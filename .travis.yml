@@ -3,7 +3,7 @@ services:
     - docker
 
 before_install:
-    - docker build -t mitsaek/react-test -f ./client/Dockerfile.dev
+    - docker build -t mitsaek/react-test ./client/Dockerfile.dev
 
 script:
     - docker run mitsaek/react-test npm test -- --coverage 
